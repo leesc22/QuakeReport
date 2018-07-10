@@ -54,13 +54,13 @@ object QueryUtils {
                 val properties = currentEarthquake.getJSONObject("properties")
 
                 // Extract the value for the key called "mag"
-                val magnitude = properties.getString("mag").toString().toFloat()
+                val magnitude = properties.getString("mag")
 
                 // Extract the value for the key called "place"
                 val location = properties.getString("place")
 
                 // Extract the value for the key called "time"
-                val time = properties.getString("time")
+                val time = properties.getLong("time")
 
                 // Create a new {@link Earthquake} object with the magnitude, location, and time
                 // from the JSON response.
