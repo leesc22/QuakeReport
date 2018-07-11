@@ -12,6 +12,12 @@ import java.util.*
 
 
 /**
+ * The part of the location string from the USGS service that we use to determine
+ * whether or not there is a location offset present ("5km N of Cairo, Egypt").
+ */
+private const val LOCATION_SEPARATOR = " of "
+
+/**
  * An {@link EarthquakeAdapter} knows how to create a list item layout for each earthquake
  * in the data source (a list of {@link Earthquake} objects).
  *
@@ -44,10 +50,44 @@ class EarthquakeAdapter(context:Context, earthquakes:List<Earthquake>) : ArrayAd
         // Display the magnitude of the current earthquake in that TextView
         magnitudeTextView.text = currentEarthquake.magnitude.toString()
 
-        // Find the TextView with view ID location
-        val placeTextView = listItemView!!.findViewById(R.id.location_text_view) as TextView
+        // Get the original location string from the Earthquake object,
+        // which can be in the format of "5km N of Cairo, Egypt" or "Pacific-Antarctic Ridge".
+        val originalLocation  = currentEarthquake.location
+
+        // If the original location string (i.e. "5km N of Cairo, Egypt") contains
+        // a primary location (Cairo, Egypt) and a location offset (5km N of that city)
+        // then store the primary location separately from the location offset in 2 Strings,
+        // so they can be displayed in 2 TextViews.
+        var primaryLocation: String
+        var locationOffset: String
+
+        // Check whether the originalLocation string contains the " of " text
+        if (originalLocation .contains(LOCATION_SEPARATOR)) {
+            // Split the string into different parts (as an array of Strings)
+            // based on the " of " text. We expect an array of 2 Strings, where
+            // the first String will be "5km N of" and the second String will be "Cairo, Egypt".
+            val parts  = originalLocation .split("(?<=$LOCATION_SEPARATOR)".toRegex())
+            // Location offset should be "5km N of"
+            locationOffset = parts[0]
+            // Primary location should be "Cairo, Egypt"
+            primaryLocation = parts[1]
+        } else {
+            // Otherwise, there is no " of " text in the originalLocation string.
+            // Hence, set the default location offset to say "Near the".
+            locationOffset = context.getString(R.string.near_the)
+            // The primary location will be the full location string "Pacific-Antarctic Ridge".
+            primaryLocation = originalLocation
+        }
+
+        // Find the TextView with view ID location_offset
+        val locationOffsetTextView = listItemView!!.findViewById(R.id.location_offset_text_view) as TextView
+        // Display the location offset of the current earthquake in that TextView
+        locationOffsetTextView.text = locationOffset
+
+        // Find the TextView with view ID primary_location
+        val primaryLocationTextView = listItemView!!.findViewById(R.id.primary_location_text_view) as TextView
         // Display the location of the current earthquake in that TextView
-        placeTextView.text = currentEarthquake.location
+        primaryLocationTextView.text = primaryLocation
 
         // Create a new Date object from the time in milliseconds of the earthquake
         val dateObject = Date(currentEarthquake.timeInMilliseconds)
