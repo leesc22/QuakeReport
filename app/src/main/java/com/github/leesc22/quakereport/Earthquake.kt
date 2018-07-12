@@ -10,4 +10,4 @@ package com.github.leesc22.quakereport
  * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the
  * earthquake happened
  */
-class Earthquake constructor(var magnitude: String, var location: String, var timeInMilliseconds: Long)
+class Earthquake constructor(var magnitude: Double, var location: String, var timeInMilliseconds: Long)

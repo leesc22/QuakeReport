@@ -47,8 +47,10 @@ class EarthquakeAdapter(context:Context, earthquakes:List<Earthquake>) : ArrayAd
 
         // Find the TextView with view ID magnitude
         val magnitudeTextView = listItemView!!.findViewById(R.id.magnitude_text_view) as TextView
+        // Format the magnitude to show 1 decimal place
+        val formattedMagnitude = formatMagnitude(currentEarthquake.magnitude)
         // Display the magnitude of the current earthquake in that TextView
-        magnitudeTextView.text = currentEarthquake.magnitude.toString()
+        magnitudeTextView.text = formattedMagnitude
 
         // Get the original location string from the Earthquake object,
         // which can be in the format of "5km N of Cairo, Egypt" or "Pacific-Antarctic Ridge".
@@ -108,6 +110,14 @@ class EarthquakeAdapter(context:Context, earthquakes:List<Earthquake>) : ArrayAd
 
         // Return the list item view that is now showing the appropriate data
         return listItemView
+    }
+
+    /**
+     * Return the formatted magnitude string showing 1 decimal place (i.e. "3.2")
+     * from a decimal magnitude value.
+     */
+    private fun formatMagnitude(magnitude: Double): String {
+        return ("%.1f").format(magnitude)
     }
 
     /**

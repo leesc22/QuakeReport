@@ -54,7 +54,7 @@ object QueryUtils {
                 val properties = currentEarthquake.getJSONObject("properties")
 
                 // Extract the value for the key called "mag"
-                val magnitude = properties.getString("mag")
+                val magnitude = properties.getDouble("mag")
 
                 // Extract the value for the key called "place"
                 val location = properties.getString("place")
